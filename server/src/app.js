@@ -48,6 +48,7 @@ app.use(
     origin: (origin, cb) => {
       if (!origin) return cb(null, true);
       if (config.corsOrigin.includes(origin)) return cb(null, true);
+      logger.warn({ origin }, 'cors:rejected');
       cb(new Error('CORS: origin not allowed'));
     },
     credentials: true,
