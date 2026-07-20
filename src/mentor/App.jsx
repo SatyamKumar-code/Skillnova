@@ -16,6 +16,7 @@ const AIAssistant    = lazy(() => import('./pages/AIAssistant'));
 const Leaderboard    = lazy(() => import('../user/pages/Leaderboard'));
 const Profile        = lazy(() => import('./pages/Profile'));
 const Settings       = lazy(() => import('./pages/Settings'));
+const Flags          = lazy(() => import('./pages/Flags'));
 
 const PAGES = {
   dashboard:      <Dashboard />,
@@ -29,6 +30,7 @@ const PAGES = {
   ai:             <Suspense fallback={<PageLoader />}><AIAssistant /></Suspense>,
   profile:        <Suspense fallback={<PageLoader />}><Profile /></Suspense>,
   settings:       <Suspense fallback={<PageLoader />}><Settings /></Suspense>,
+  flags:          <Suspense fallback={<PageLoader />}><Flags /></Suspense>,
 };
 
 const MentorApp = () => {

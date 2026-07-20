@@ -78,6 +78,8 @@ model User {
   mentorOf          InternProfile[] @relation("MentorRelation")
   organizedMeetings Meeting[]      @relation("OrganizedMeetings")
   meetingAttendees  MeetingAttendee[]
+  flagsRaised     Flag[]   @relation("FlaggedByMentor")
+  flagsReceived   Flag[]   @relation("FlaggedIntern")
   collaborativeTasksCreated CollaborativeTask[] @relation("TaskCreator")
   collaborativeTasksAssigned CollaborativeTask[] @relation("TaskAssignees")
   teams          Team[]              @relation("TeamMembers")
@@ -640,6 +642,37 @@ model MeetingAttendee {
 
   @@unique([meetingId, userId])
   @@index([userId])
+}
+// ── Flags / Alerts ───────────────────────────────────────────
+enum FlagType {
+  ATTENDANCE_DROPPING
+  MISSED_DEADLINE
+  NEEDS_SUPPORT
+  BEHAVIOUR_CONCERN
+  OTHER
+}
+
+enum FlagStatus {
+  ACTIVE
+  RESOLVED
+}
+
+model Flag {
+  id          String     @id @default(cuid())
+  internId    String
+  intern      User       @relation("FlaggedIntern", fields: [internId], references: [id], onDelete: Cascade)
+  mentorId    String
+  mentor      User       @relation("FlaggedByMentor", fields: [mentorId], references: [id])
+  type        FlagType
+  reason      String?
+  status      FlagStatus @default(ACTIVE)
+  resolvedAt  DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([internId])
+  @@index([mentorId])
+  @@index([status])
 }
 
 // ── Collaborative Task Models ────────────────────────────────

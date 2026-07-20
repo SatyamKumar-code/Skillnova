@@ -139,5 +139,16 @@ router.post(
 router.get('/google/status', googleAuth.status);
 router.get('/google', googleAuth.start);
 router.get('/google/callback', googleAuth.callback);
+// Demo accounts (development only)
+router.get('/demo-accounts', (req, res) => {
+  res.json({
+    accounts: [
+      { label: 'Senior Team Leader', email: 'superadmin@skillnova.com', pwd: 'SuperAdmin#2026', color: '#7C3AED' },
+      { label: 'Team Leader',        email: 'admin@skillnova.com',      pwd: 'Admin#2026',      color: '#ff6d34' },
+      { label: 'Captain',            email: 'mentor@skillnova.com',     pwd: 'Mentor#2026',     color: '#7C3AED' },
+      { label: 'Intern',             email: 'rahul@skillnova.com',      pwd: 'User#2026',       color: '#00bea3' },
+    ],
+  });
+});
 
 export default router;
