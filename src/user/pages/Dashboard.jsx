@@ -25,22 +25,25 @@ const Dashboard = ({ onNavigate }) => {
   const [myTasks, setMyTasks] = useState([]);
   const [attendance, setAttendance] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [myAlerts, setMyAlerts] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const [s, r, t, a] = await Promise.all([
+        const [s, r, t, a, f] = await Promise.all([
           api.get('/reports/stats'),
           api.get('/reports', { params: { limit: 5 } }),
           api.get('/tasks', { params: { limit: 50 } }),
           api.get('/attendance/summary'),
+          api.get('/flags/my-alerts'),
         ]);
         setStats(s.data);
         setMyReports(r.data.items);
         setMyTasks(t.data.items);
         setAttendance(a.data);
-      } catch {
-        /* ignore */
+        setMyAlerts(f.data.flags || []);
+      }  catch (err) {
+        console.error('Dashboard fetch error:', err);
       } finally {
         setLoading(false);
       }
@@ -69,6 +72,21 @@ const Dashboard = ({ onNavigate }) => {
 
   return (
     <div className="space-y-6 pb-16">
+    {myAlerts.length > 0 && (
+  <div className="rounded-xl p-4 border border-red-500/30 bg-red-500/10">
+    <p className="text-red-400 font-semibold mb-2">⚠️ You have {myAlerts.length} active flag{myAlerts.length > 1 ? 's' : ''} from your Captain</p>
+    <div className="space-y-2">
+      {myAlerts.map((flag) => (
+        <div key={flag.id} className="flex items-center gap-2 text-sm text-red-300">
+          <span>🔴</span>
+          <span className="font-medium">{flag.type.replace(/_/g, ' ')}</span>
+          {flag.reason && <span className="text-red-400/70">— {flag.reason}</span>}
+          <span className="text-red-400/50 text-xs ml-auto">by {flag.mentor.name}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
       <MotionDiv
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
