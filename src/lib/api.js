@@ -2,6 +2,7 @@
 //  Axios client with auth interceptor + CSRF + refresh
 // ════════════════════════════════════════════════════════════
 import axios from 'axios';
+import { APP_CONSTANTS } from '../shared/config/constants';
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || '';
@@ -10,7 +11,7 @@ const AUTH_STORAGE_KEY = 'skillnova.auth';
 export const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
-  timeout: 30_000,
+  timeout: APP_CONSTANTS.API_TIMEOUT,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -56,8 +57,9 @@ api.interceptors.request.use((config) => {
   }
 
   const csrf = getCookie('sn_csrf');
+  const csrf = getCookie(APP_CONSTANTS.CSRF_COOKIE);
   if (csrf && ['post', 'put', 'patch', 'delete'].includes(config.method)) {
-    config.headers['X-CSRF-Token'] = csrf;
+    config.headers[APP_CONSTANTS.CSRF_HEADER] = csrf;
   }
   return config;
 });
